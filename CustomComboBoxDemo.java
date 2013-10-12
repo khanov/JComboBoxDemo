@@ -1,6 +1,8 @@
 
 import java.awt.*;
+
 import javax.swing.*;
+
 import java.awt.event.*;
 
 /**
@@ -48,7 +50,7 @@ public class CustomComboBoxDemo extends JPanel {
     
     /**
      * Creates a simple JComboBox with the ability to set
-     * current selected index, using the TextField and Button. 
+     * current selected index, using the TextField and Button.
      * @return JPanel - a "card" to display in the CardLayout
      */
     private JPanel createSimpleComboBoxCard() {
@@ -84,12 +86,35 @@ public class CustomComboBoxDemo extends JPanel {
     	return card;
     }
     
+    
+    /**
+     * Creates an editable JComboBox, i.ei a user can actually type something in it.
+     * Uses a JCheckBox to switch between "Editable" and "Non-editable" states.
+     * @return JPanel - a "card" to display in the CardLayout
+     */
     private JPanel createEditableComboBoxCard() {
-    	JComboBox editableComboBox = new JComboBox(plantsStrings);
+    	final JComboBox editableComboBox = new JComboBox(plantsStrings);
+    	editableComboBox.setPreferredSize(new Dimension(200, 30));
         editableComboBox.setEditable(true);
+        editableComboBox.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		System.out.println(editableComboBox.getSelectedIndex());
+    		}
+    	});
         
+        // Setting up the CheckBox
+        final JCheckBox checkBox = new JCheckBox("Editable");
+        checkBox.setSelected(true);
+        checkBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editableComboBox.setEditable(!editableComboBox.isEditable());
+			}
+        });
+        
+        // Packing everything up into a card
         JPanel card = new JPanel();
         card.add(editableComboBox);
+        card.add(checkBox);
         return card;
     }
     

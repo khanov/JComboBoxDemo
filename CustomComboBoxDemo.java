@@ -3,6 +3,10 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
+/**
+ * @author khanov
+ *
+ */
 public class CustomComboBoxDemo extends JPanel {
 	
 	private JPanel pnlComboBoxes; // A panel to display different ComboBoxes (uses CardLayout)
@@ -33,20 +37,50 @@ public class CustomComboBoxDemo extends JPanel {
         
         // Creates a panel to display different ComboBoxes (uses CardLayout, shows "cards")
         pnlComboBoxes = new JPanel(new CardLayout(0, 0));
-        pnlComboBoxes.add(new JPanel(), comboBoxTypes[0]);
-        pnlComboBoxes.add(card1, comboBoxTypes[1]);
-        pnlComboBoxes.add(card2, comboBoxTypes[2]);
-        pnlComboBoxes.add(card3, comboBoxTypes[3]);
-        pnlComboBoxes.add(card4, comboBoxTypes[4]);
+        pnlComboBoxes.add(new JPanel(), comboBoxTypes[0]); // Blank
+        pnlComboBoxes.add(card1, comboBoxTypes[1]); // Simple ComboBox
+        pnlComboBoxes.add(card2, comboBoxTypes[2]); // Editable ComboBox
+        pnlComboBoxes.add(card3, comboBoxTypes[3]); // Multiple selection List
+        pnlComboBoxes.add(card4, comboBoxTypes[4]); // ComboBox with images inside it
         add(pnlComboBoxes);
     }    
     
+    
+    /**
+     * Creates a simple JComboBox with the ability to set
+     * current selected index, using the TextField and Button. 
+     * @return JPanel - a "card" to display in the CardLayout
+     */
     private JPanel createSimpleComboBoxCard() {
-    	JComboBox simpleComboBox = new JComboBox(petStrings);
+    	final JComboBox simpleComboBox = new JComboBox(petStrings);
         simpleComboBox.setSelectedIndex(2);
         
+        // A TextField and Button to submit new selected index
+        final JTextField textField = new JTextField();
+        textField.setColumns(10);
+        JButton submitButton = new JButton("Set New Selected Index");
+        submitButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int newIndex = Integer.parseInt(textField.getText());
+				if (newIndex > petStrings.length - 1) {
+					System.out.println("Error: invalid input."); // handle "out of bound" error
+					return;
+				}
+				simpleComboBox.setSelectedIndex(newIndex);
+				textField.setText(null); // clear text after submission
+			}
+        });
+        
+        // A container to hold the TextField and Button
+        JPanel submissionPanel = new JPanel();
+        submissionPanel.add(textField);
+        submissionPanel.add(submitButton);
+        
+        // Packing everything up into a card
         JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.add(simpleComboBox);
+        card.add(submissionPanel);
     	return card;
     }
     

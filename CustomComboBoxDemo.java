@@ -98,7 +98,7 @@ public class CustomComboBoxDemo extends JPanel {
         editableComboBox.setEditable(true);
         editableComboBox.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		System.out.println(editableComboBox.getSelectedIndex());
+        		System.out.println(editableComboBox.getSelectedItem());
     		}
     	});
         

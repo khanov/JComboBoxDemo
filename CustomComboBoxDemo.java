@@ -2,13 +2,11 @@
 import java.awt.*;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import java.awt.event.*;
 
-/**
- * @author khanov
- *
- */
 public class CustomComboBoxDemo extends JPanel {
 	
 	private JPanel pnlComboBoxes; // A panel to display different ComboBoxes (uses CardLayout)
@@ -118,14 +116,50 @@ public class CustomComboBoxDemo extends JPanel {
         return card;
     }
     
+    
+    /**
+     * Creates a multiple selection JList.
+     * Prints out selection indexes.
+     * @return JPanel - a "card" to display in the CardLayout
+     */
     private JPanel createMultiSelectionListCard() {
-    	JList multiSelectionList = new JList(plantsStrings);
+    	// TODO Selection mode: single selection mode, single interval selection mode, multiple interval selection mode
+    	JList multiSelectionList = new JList(petStrings);
+    	multiSelectionList.setSize(450, 550);
+    	multiSelectionList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				JList lsm = (JList)e.getSource();
+
+		        int firstIndex = e.getFirstIndex();
+		        int lastIndex = e.getLastIndex();
+		        boolean isAdjusting = e.getValueIsAdjusting();
+		        System.out.println("Event for indexes " + firstIndex + " - " + lastIndex + "; isAdjusting is " + isAdjusting + "; selected indexes:");
+
+		        if (lsm.isSelectionEmpty()) {
+		        	System.out.println(" <none>");
+		        } else {
+		            // Find out which indexes are selected.
+		            int minIndex = lsm.getMinSelectionIndex();
+		            int maxIndex = lsm.getMaxSelectionIndex();
+		            for (int i = minIndex; i <= maxIndex; i++) {
+		                if (lsm.isSelectedIndex(i)) {
+		                	System.out.println(" " + i);
+		                }
+		            }
+		        }
+			}
+    	});
         
         JPanel card = new JPanel();
         card.add(multiSelectionList);
         return card;
     }
     
+    /**
+     * Creates a ComboBox that displays images inside it.
+     * Uses ComboBoxRenderer, which implements ListCellRenderer.
+     * @return JPanel - a "card" to display in the CardLayout
+     */
     private JPanel createComboBoxWithCustomRendererCard() {
     	//Load the pet images and create an array of indexes.
         images = new ImageIcon[petStrings.length];
@@ -161,8 +195,6 @@ public class CustomComboBoxDemo extends JPanel {
     }
 
     public static void main(String[] args) {
-        //Schedule a job for the event-dispatching thread:
-        //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 createAndShowGUI();
@@ -174,18 +206,16 @@ public class CustomComboBoxDemo extends JPanel {
         //Create and set up the window.
         JFrame frame = new JFrame("CustomComboBoxDemo");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         //Create and set up the content pane.
         JComponent newContentPane = new CustomComboBoxDemo();
         newContentPane.setOpaque(true); //content panes must be opaque
         frame.setContentPane(newContentPane);
-
         //Display the window.
         frame.pack();
         frame.setVisible(true);
     }
     
-    /*
+    /**
      * A renderer for a combo box must implement the ListCellRenderer interface. 
      * A combo box's editor must implement ComboBoxEditor.
      */
@@ -198,14 +228,13 @@ public class CustomComboBoxDemo extends JPanel {
             setVerticalAlignment(CENTER);
         }
 
-        /*
+        /**
          * This method finds the image and text corresponding
          * to the selected value and returns the label, set up
          * to display the text and image.
          */
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            //Get the selected index. (The index param isn't
-            //always valid, so just use the value.)
+            // Get the selected index. (The index param isn't always valid, so just use the value.)
             int selectedIndex = ((Integer)value).intValue();
 
             if (isSelected) {
@@ -216,7 +245,7 @@ public class CustomComboBoxDemo extends JPanel {
                 setForeground(list.getForeground());
             }
 
-            //Set the icon and text.  If icon was null, say so.
+            //Set the icon and text. If icon was null, say so.
             ImageIcon icon = images[selectedIndex];
             String pet = petStrings[selectedIndex];
             setIcon(icon);
@@ -230,7 +259,7 @@ public class CustomComboBoxDemo extends JPanel {
             return this;
         }
 
-        //Set the font and text when no image was found.
+        // Set the font and text when no image was found.
         protected void setUhOhText(String uhOhText, Font normalFont) {
             if (uhOhFont == null) { //lazily create this font
                 uhOhFont = normalFont.deriveFont(Font.ITALIC);
